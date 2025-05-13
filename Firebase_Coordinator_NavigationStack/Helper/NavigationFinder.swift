@@ -16,7 +16,7 @@ enum ViewOption: Hashable {
     @ViewBuilder func view() -> some View {
         switch self {
         case .intro: HomeView()
-        case .email: HomeView()
+        case .email: Text("Email")
         case .login: HomeView()
         case .main: HomeView()
         }

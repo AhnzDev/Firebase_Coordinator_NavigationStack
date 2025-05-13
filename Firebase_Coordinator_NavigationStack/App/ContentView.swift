@@ -20,11 +20,12 @@ struct ContentView: View {
                     CustomTabBar(currentTab: $currentTab)
                 }
             }
-        }.navigationDestination(for: ViewOption.self) { option in
-            option.view()
+            .navigationDestination(for: ViewOption.self) { option in
+                option.view()
+            }
         }
-        
     }
+        
 }
 
 struct FirstDestinationView: View {
