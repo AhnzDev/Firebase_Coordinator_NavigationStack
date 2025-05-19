@@ -1,8 +1,8 @@
 //
-//  Untitled.swift
-//  Firebase_Coordinator_NavigationStack
+//  CustomTabView.swift
+//  SwiftUIFireBase
 //
-//  Created by Jihoon on 5/10/25.
+//  Created by Jihoon on 5/2/25.
 //
 
 import SwiftUI
@@ -15,14 +15,17 @@ enum Tab: String, CaseIterable {
     
     var titleText: String {
         switch self {
-            case .home: return "홈"
-            case .forum: return "게시판"
-            case .study: return "스터디"
-            case .profile: return "프로필"
+        case .home:
+            return "홈"
+        case .forum:
+            return "게시판"
+        case .study:
+            return "스터디"
+        case .profile:
+            return "프로필"
         }
     }
 }
-
 struct CustomTabBar: View {
     @Binding var currentTab: Tab
     
@@ -61,10 +64,13 @@ struct CustomTabBar: View {
         .background(.ultraThinMaterial)
     }
 }
-
 struct TabButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.8 : 1.0)
     }
+}
+
+#Preview {
+    CustomTabBar(currentTab: Binding.constant(Tab.home))
 }

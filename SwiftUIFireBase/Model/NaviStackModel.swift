@@ -1,11 +1,12 @@
 //
-//  Model.swift
-//  Firebase_Coordinator_NavigationStack
+//  NaviStackModel.swift
+//  SwiftUIFireBase
 //
-//  Created by Jihoon on 5/10/25.
+//  Created by Jihoon on 5/9/25.
 //
 
 import Foundation
+
 
 struct ChampionModel: Identifiable, Hashable {
     let id = UUID().uuidString
