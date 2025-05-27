@@ -9,21 +9,22 @@ import SwiftUI
 
 struct RootView: View {
     @StateObject private var naviPathFinder = NavigationPathFinder.shared
-    @State private var showSignInView: Bool = false
+    
+    @State var showInEmailView: Bool = false
     
     var body: some View {
         ZStack {
             NavigationStack {
-                SettingsView(showSignInView: $showSignInView)
+                SettingsView(showSignInView: $showInEmailView)
             }
         }
         .onAppear() {
             let authUser = try? AuthentivationManager.shared.getAuthenticatedUser()
-            self.showSignInView = authUser == nil ? true : false
+            self.naviPathFinder.showInEmailView = authUser == nil ? true : false
         }
-        .fullScreenCover(isPresented: $showSignInView){
+        .fullScreenCover(isPresented:  $showInEmailView){
             NavigationStack(path: $naviPathFinder.path) {
-                AuthenticationView()
+                AuthenticationView(showSignInView: $showInEmailView)
             }
             .environmentObject(naviPathFinder)
         }

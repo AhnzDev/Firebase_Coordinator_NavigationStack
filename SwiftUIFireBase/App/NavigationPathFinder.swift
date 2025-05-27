@@ -11,15 +11,13 @@ import SwiftUI
 enum ViewOption: Hashable {
     case homeFirst(champion: ChampionModel)
     case homeSecond(champion: ChampionModel)
-    case product(product: String)
-    case signInEamil
+    case signInEmail
     
     @ViewBuilder func view() -> some View {
         switch self {
         case .homeFirst(let champion): HomeRowDestinationView(champion: champion)
         case .homeSecond(let champion): HomeSkinBuyView(champion: champion)
-        case .product(let product): AppleProductView(product: product)
-        case .signInEamil: SignInEmailView()
+        case .signInEmail: RootView()
         }
     }
 }
@@ -31,11 +29,19 @@ final class NavigationPathFinder: ObservableObject {
     
     @Published var path: NavigationPath = .init()
     
+    @State var showInEmailView: Bool = false
+    
     func addPath(option: ViewOption) {
         path.append(option)
     }
     func popToRoot() {
         path = .init()
     }
+}
+
+final class ViewStateStore: ObservableObject {
+    static let shared = ViewStateStore()
     
+    private init() { }
+    @Published var showInEmailView: Bool = false
 }

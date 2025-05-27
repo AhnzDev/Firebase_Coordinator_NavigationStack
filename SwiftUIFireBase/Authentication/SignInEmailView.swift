@@ -12,25 +12,18 @@ final class SingInEmailViewModel: ObservableObject {
     @Published var email = ""
     @Published var password = ""
     
-    func signIn() {
+    func signIn() async throws {
         guard !email.isEmpty, !password.isEmpty else {
             print("No Email or password found")
             return
         }
-        Task {
-            do {
-                let returnedUserData = try await AuthentivationManager.shared.createUser(email: email, password: password)
-                print("Success")
-                print(returnedUserData)
-            } catch {
-                print("Error : \(error)")
-            }
-        }
+        try await AuthentivationManager.shared.createUser(email: email, password: password)
     }
 }
 
 struct SignInEmailView: View {
     @ObservedObject var viewModel = SingInEmailViewModel()
+    @Binding var showSignInView: Bool
     var body: some View {
         VStack {
             TextField("Email", text: $viewModel.email)
@@ -43,7 +36,14 @@ struct SignInEmailView: View {
                 .cornerRadius(10)
             
             Button {
-                viewModel.signIn()
+                Task {
+                    do {
+                        try await viewModel.signIn()
+                        NavigationPathFinder.shared.popToRoot()
+                    } catch {
+                        debugPrint("\(type(of: self))",#function,#line, "jha - \(error)")
+                    }
+                }
             } label: {
                 Text("Sign In")
                     .font(.headline)
@@ -64,6 +64,6 @@ struct SignInEmailView: View {
 
 #Preview {
     NavigationStack {
-        SignInEmailView(viewModel: SingInEmailViewModel())
+        SignInEmailView(viewModel: SingInEmailViewModel(), showSignInView: .constant(false))
     }
 }
