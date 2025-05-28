@@ -22,6 +22,11 @@ enum ViewOption: Hashable {
     }
 }
 
+enum BindingViewOption: String, Hashable {
+    case signInEmail
+    case googleSignIn
+}
+
 final class NavigationPathFinder: ObservableObject {
     static let shared = NavigationPathFinder()
     

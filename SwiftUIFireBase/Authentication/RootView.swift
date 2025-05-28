@@ -14,13 +14,16 @@ struct RootView: View {
     
     var body: some View {
         ZStack {
-            NavigationStack {
-                SettingsView(showSignInView: $showInEmailView)
+            if !showInEmailView {
+                NavigationStack {
+                    SettingsView(showSignInView: $showInEmailView)
+                }
             }
         }
         .onAppear() {
-            let authUser = try? AuthentivationManager.shared.getAuthenticatedUser()
+            let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
             self.naviPathFinder.showInEmailView = authUser == nil ? true : false
+            
         }
         .fullScreenCover(isPresented:  $showInEmailView){
             NavigationStack(path: $naviPathFinder.path) {

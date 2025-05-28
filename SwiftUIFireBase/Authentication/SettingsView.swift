@@ -10,27 +10,35 @@ import SwiftUI
 @MainActor
 final class SettingsViewModel: ObservableObject {
     
+    @Published var authProviders: [AuthProviderOption] = []
+    
+    func loadAuthProviders() {
+        if let providers = try? AuthenticationManager.shared.getProviders() {
+            authProviders = providers
+        }
+    }
+    
     func logOut() throws {
-        try AuthentivationManager.shared.signOut()
+        try AuthenticationManager.shared.signOut()
     }
     
     func resetPassword() async throws {
-        let authUser = try AuthentivationManager.shared.getAuthenticatedUser()
+        let authUser = try AuthenticationManager.shared.getAuthenticatedUser()
         
         guard let email = authUser.email else {
             throw URLError(.fileDoesNotExist)
         }
-        try await AuthentivationManager.shared.resetPassword(email: email)
+        try await AuthenticationManager.shared.resetPassword(email: email)
     }
     
     func updateEmail() async throws {
         let email = "TestTest123@gmail.com"
-        try await AuthentivationManager.shared.updateEmail(email: email)
+        try await AuthenticationManager.shared.updateEmail(email: email)
     }
     
     func updatePassword() async throws {
         let password = "Hello123!"
-        try await AuthentivationManager.shared.updatePassword(password: password)
+        try await AuthenticationManager.shared.updatePassword(password: password)
     }
 }
 
@@ -53,13 +61,14 @@ struct SettingsView: View {
                 Text("Log Out")
             }
             
-            emailSection
-        
-            
-            .navigationTitle("Settings")
-
+            if viewModel.authProviders.contains(.email) {
+                emailSection
+            }
         }
-        
+        .onAppear {
+            viewModel.loadAuthProviders()
+        }
+        .navigationTitle("Settings")
     }
 }
 
@@ -109,7 +118,7 @@ extension SettingsView{
             Text ("Email Function")
         }
         
-
+        
     }
 }
 
