@@ -12,24 +12,13 @@ import FirebaseAuth
 import _AuthenticationServices_SwiftUI
 import CryptoKit
 
-struct SignInWithAppleButtonViewRepresentable: UIViewRepresentable {
-    
-    let type: ASAuthorizationAppleIDButton.ButtonType
-    let style: ASAuthorizationAppleIDButton.Style
-    
-    func makeUIView(context: Context) -> ASAuthorizationAppleIDButton {
-        return ASAuthorizationAppleIDButton(authorizationButtonType: type, authorizationButtonStyle: style)
-    }
-    
-    func updateUIView(_ uiView: ASAuthorizationAppleIDButton, context: Context) {
-        // 뷰 업데이트는 필요 시 여기에 구현
-    }
-}
 
 @MainActor
-final class AuthenticationViewModel: NSObject, ObservableObject {
+final class AuthenticationViewModel: ObservableObject {
     
-    private var currentNonce: String?
+  
+    @Published var didSignInWithApple: Bool = false
+    let helper = SignInAppleHelper()
     
     func signInGoogle() async throws{
         let helper = SignInGoogleHelper()
@@ -39,102 +28,23 @@ final class AuthenticationViewModel: NSObject, ObservableObject {
     }
     
     func signInApple() async throws{
-        let nonce = randomNonceString()
-        let sha = sha256(nonce)
+        helper.startSignInWithAppleFlow()
+        startSignInWithAppleFlow()
+        /*
+         do {
+             try await AuthenticationManager.shared.signInWithApple(tokens: result)
+             didSignInWithApple = true
+         } catch {
+             didSignInWithApple = false
+         }
+         */
     }
     
-    private func randomNonceString(length: Int = 32) -> String {
-      precondition(length > 0)
-      var randomBytes = [UInt8](repeating: 0, count: length)
-      let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
-      if errorCode != errSecSuccess {
-        fatalError(
-          "Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)"
-        )
-      }
-
-      let charset: [Character] =
-        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
-
-      let nonce = randomBytes.map { byte in
-        // Pick a random character from the set, wrapping around if needed.
-        charset[Int(byte) % charset.count]
-      }
-
-      return String(nonce)
-    }
-    
-    @available(iOS 13, *)
-    private func sha256(_ input: String) -> String {
-      let inputData = Data(input.utf8)
-      let hashedData = SHA256.hash(data: inputData)
-      let hashString = hashedData.compactMap {
-        String(format: "%02x", $0)
-      }.joined()
-
-      return hashString
-    }
-    
-    @available(iOS 13, *)
-    func startSignInWithAppleFlow() {
-      let nonce = randomNonceString()
-      currentNonce = nonce
-      let appleIDProvider = ASAuthorizationAppleIDProvider()
-      let request = appleIDProvider.createRequest()
-      request.requestedScopes = [.fullName, .email]
-      request.nonce = sha256(nonce)
-
-      let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-      authorizationController.delegate = self
-      authorizationController.presentationContextProvider = self
-      authorizationController.performRequests()
-    }
+  
 }
 
-struct SignInWithAppleResult {
-    let token: String
-    let nonce: String
-    let fullName: String?
-}
 
-@available(iOS 13.0, *)
-extension AuthenticationViewModel: ASAuthorizationControllerDelegate {
 
-  func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-    if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-      guard let nonce = currentNonce else {
-        fatalError("Invalid state: A login callback was received, but no login request was sent.")
-      }
-      guard let appleIDToken = appleIDCredential.identityToken else {
-        print("Unable to fetch identity token")
-        return
-      }
-      guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-        print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
-        return
-      }
-      // Initialize a Firebase credential, including the user's full name.
-      let credential = OAuthProvider.appleCredential(withIDToken: idTokenString,
-                                                        rawNonce: nonce,
-                                                        fullName: appleIDCredential.fullName)
-      // Sign in with Firebase.
-      Auth.auth().signIn(with: credential) { (authResult, error) in
-          if (error != nil) {
-              print(error?.localizedDescription)
-          return
-        }
-        // User is signed in to Firebase with Apple.
-        // ...
-      } 
-    }
-  }
-
-  func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-    // Handle error.
-    print("Sign in with Apple errored: \(error)")
-  }
-
-}
 
 struct AuthenticationView: View {
     let appleProducts: [String] = ["Mac", "Macbook", "iPhone", "iPad"]
@@ -171,7 +81,6 @@ struct AuthenticationView: View {
                     Task {
                         do {
                             try await viewModel.signInApple()
-                            showSignInView = false
                         } catch {
                             print(error)
                         }
@@ -181,8 +90,13 @@ struct AuthenticationView: View {
                         .allowsHitTesting(false)
                 }
                 .frame(height: 55)
-
-                    
+                .onChange(of: viewModel.didSignInWithApple) { newValue in
+                    if newValue {
+                        viewModel.startSignInWithAppleFlow()
+                    }
+                }
+                
+                
                 
             }
             .padding()

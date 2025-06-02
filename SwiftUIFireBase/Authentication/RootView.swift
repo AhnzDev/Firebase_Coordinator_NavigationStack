@@ -10,30 +10,33 @@ import SwiftUI
 struct RootView: View {
     @StateObject private var naviPathFinder = NavigationPathFinder.shared
     
-    @State var showInEmailView: Bool = false
+    @State var showSignInView: Bool = false
     
     var body: some View {
         ZStack {
-            if !showInEmailView {
+            if !showSignInView {
                 NavigationStack {
-                    SettingsView(showSignInView: $showInEmailView)
+                    SettingsView(showSignInView: $showSignInView)
                 }
             }
         }
         .onAppear() {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
             self.naviPathFinder.showInEmailView = authUser == nil ? true : false
-            
+           
+            AZLogger.azOsLog("앱이 실행 됐습니다",level: .request)
         }
-        .fullScreenCover(isPresented:  $showInEmailView){
+        .fullScreenCover(isPresented:  $showSignInView){
             NavigationStack(path: $naviPathFinder.path) {
-                AuthenticationView(showSignInView: $showInEmailView)
+                AuthenticationView(showSignInView: $showSignInView)
             }
             .environmentObject(naviPathFinder)
         }
         
     }
 }
+
+
 
 #Preview {
     RootView()

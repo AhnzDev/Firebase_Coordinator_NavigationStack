@@ -106,10 +106,12 @@ extension AuthenticationManager {
     }
     
     @discardableResult
-    func signInWithApple(tokens: GoogleSignInResultModel) async throws -> AuthDataResultModel{
-        let credential = OAuthProvider.appleCredential(withIDToken: idTokenString,
-                                                      rawNonce: nonce,
-                                                      fullName: appleIDCredential.fullName)
+    func signInWithApple(tokens: SignInWithAppleResult) async throws -> AuthDataResultModel{
+        // Initialize a Firebase credential, including the user's full name.
+        
+        let credential = OAuthProvider.appleCredential(withIDToken: tokens.token,
+                                                       rawNonce: tokens.nonce,
+                                                       fullName: tokens.fullName)
     // Sign in with Firebase.
         return  try await signIn(credential: credential)
     }

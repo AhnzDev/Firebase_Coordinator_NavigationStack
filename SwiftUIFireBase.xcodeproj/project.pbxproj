@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		E90330462DE59AB2007D7E89 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E90330452DE59AB2007D7E89 /* GoogleSignIn */; };
 		E90330482DE59AB2007D7E89 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E90330472DE59AB2007D7E89 /* GoogleSignInSwift */; };
+		E95644342DE99369008BE02E /* AZLogger in Frameworks */ = {isa = PBXBuildFile; productRef = E95644332DE99369008BE02E /* AZLogger */; };
 		E95BC8512DC213D3006F9128 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E95BC8502DC213D3006F9128 /* FirebaseAnalytics */; };
 		E95BC8672DC22621006F9128 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E95BC8662DC22621006F9128 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
@@ -75,6 +76,7 @@
 				E95BC8512DC213D3006F9128 /* FirebaseAnalytics in Frameworks */,
 				E95BC8672DC22621006F9128 /* FirebaseAuth in Frameworks */,
 				E90330462DE59AB2007D7E89 /* GoogleSignIn in Frameworks */,
+				E95644342DE99369008BE02E /* AZLogger in Frameworks */,
 				E90330482DE59AB2007D7E89 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -148,6 +150,7 @@
 				E95BC8662DC22621006F9128 /* FirebaseAuth */,
 				E90330452DE59AB2007D7E89 /* GoogleSignIn */,
 				E90330472DE59AB2007D7E89 /* GoogleSignInSwift */,
+				E95644332DE99369008BE02E /* AZLogger */,
 			);
 			productName = SwiftUIFireBase;
 			productReference = E95BC81C2DC210D5006F9128 /* SwiftUIFireBase.app */;
@@ -234,6 +237,7 @@
 			packageReferences = (
 				E95BC84F2DC213D3006F9128 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				E90330442DE59AB2007D7E89 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				E95644322DE99369008BE02E /* XCRemoteSwiftPackageReference "AZLogger" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E95BC81D2DC210D5006F9128 /* Products */;
@@ -614,6 +618,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		E95644322DE99369008BE02E /* XCRemoteSwiftPackageReference "AZLogger" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AhnzDev/AZLogger.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		E95BC84F2DC213D3006F9128 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -634,6 +646,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E90330442DE59AB2007D7E89 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		E95644332DE99369008BE02E /* AZLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E95644322DE99369008BE02E /* XCRemoteSwiftPackageReference "AZLogger" */;
+			productName = AZLogger;
 		};
 		E95BC8502DC213D3006F9128 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
