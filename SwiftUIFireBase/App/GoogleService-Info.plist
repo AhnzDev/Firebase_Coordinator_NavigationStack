@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>322550071561-2ikrvkpto5tccanjfa8k3bcsc3k2tut5.apps.googleusercontent.com</string>
+	<string>322550071561-ape3v4ghi69v6p0enugskoom9t0k3fnn.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.322550071561-2ikrvkpto5tccanjfa8k3bcsc3k2tut5</string>
+	<string>com.googleusercontent.apps.322550071561-ape3v4ghi69v6p0enugskoom9t0k3fnn</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCwYv8yxNja1Ui3Y824K7S_wWuF0zBaCqI</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.infovine.SwiftUIFireBase</string>
+	<string>com.ahnzDev.SwiftUIFireBase</string>
 	<key>PROJECT_ID</key>
 	<string>swiftuifirebase-f0380</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:322550071561:ios:b9f2354ade9d87ee12d3d8</string>
+	<string>1:322550071561:ios:44866b640bffe34512d3d8</string>
 </dict>
 </plist>

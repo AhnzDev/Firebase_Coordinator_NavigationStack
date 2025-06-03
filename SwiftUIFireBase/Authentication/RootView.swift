@@ -23,8 +23,6 @@ struct RootView: View {
         .onAppear() {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
             self.naviPathFinder.showInEmailView = authUser == nil ? true : false
-           
-            AZLogger.azOsLog("앱이 실행 됐습니다",level: .request)
         }
         .fullScreenCover(isPresented:  $showSignInView){
             NavigationStack(path: $naviPathFinder.path) {

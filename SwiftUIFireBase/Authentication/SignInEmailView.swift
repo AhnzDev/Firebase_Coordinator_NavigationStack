@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 @MainActor
 final class SingInEmailViewModel: ObservableObject {
     @Published var email = ""

@@ -52,7 +52,7 @@ struct SettingsView: View {
                 Task {
                     do {
                         try viewModel.logOut()
-                        azLog("이렇게 하면 됨 \(showSignInView)")
+//                        azLog("이렇게 하면 됨 \(showSignInView)")
                         showSignInView = true
                     } catch {
                         print(error)
@@ -68,7 +68,7 @@ struct SettingsView: View {
         }
         .onAppear {
             viewModel.loadAuthProviders()
-            AZLogger.azOsLog("앱이 실행 됐습니다",level: .error)
+//            AZLogger.azOsLog("앱이 실행 됐습니다",level: .error)
         }
         .navigationTitle("Settings")
     }

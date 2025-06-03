@@ -9,11 +9,24 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.322550071561-2ikrvkpto5tccanjfa8k3bcsc3k2tut5</string>
+				<string>com.googleusercontent.apps.322550071561-ape3v4ghi69v6p0enugskoom9t0k3fnn</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakaoe75744d6e9f6fc99f43c5ab0ee34b8d7</string>
 			</array>
 		</dict>
 	</array>
 	<key>GIDClientID</key>
-	<string>322550071561-2ikrvkpto5tccanjfa8k3bcsc3k2tut5.apps.googleusercontent.com</string>
+	<string>322550071561-ape3v4ghi69v6p0enugskoom9t0k3fnn.apps.googleusercontent.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string></string>
+		<string>kakaokompassauth</string>
+	</array>
 </dict>
 </plist>

@@ -9,33 +9,26 @@ import SwiftUI
 
 import Firebase
 import FirebaseCore
+import KakaoSDKCommon
+import KakaoSDKAuth
 
 @main
 struct SwiftUIFireBaseApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
- @Environment(\.scenePhase) private var scenePhase
-
+    init() {
+        KakaoSDK.initSDK(appKey: "e75744d6e9f6fc99f43c5ab0ee34b8d7")
+    }
     var body: some Scene {
         WindowGroup {
             RootView()
-        }
-        .onChange(of: scenePhase) { newPhase in
-                    switch newPhase {
-                    case .active:
-//                        logger.debug(msg: "앱이 활성화되었습니다")
-                        AZLogger.azOsLog("앱이 활성화되었습니다", level: .error)
-                    case .inactive:
-//                        logger.debug(msg: "앱이 비활성화됩니다")
-                        AZLogger.azOsLog("앱이 비활성화됩니다", level: .error)
-                    case .background:
-//                        logger.debug(msg: "앱이 백그라운드로 전환됩니다")
-                        AZLogger.azOsLog("앱이 백그라운드로 전환됩니다", level: .error)
-                        
-                    @unknown default:
-                        break
+                .onOpenURL(perform: { url in
+                    if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                        AuthController.handleOpenUrl(url: url)
                     }
-                }
+                })
+        }
+      
     }
 }
 
@@ -48,4 +41,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
     
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        if (AuthApi.isKakaoTalkLoginUrl(url)) {
+            return AuthController.handleOpenUrl(url: url)
+        }
+        
+        return false
+    }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CryptoKit
 import FirebaseAuth
 import _AuthenticationServices_SwiftUI
 
@@ -35,7 +36,21 @@ final class SignInAppleHelper: NSObject {
     private var currentNonce: String?
     private var completionHandler: ((Result<SignInWithAppleResult, Error>) -> Void)?
     
-    @available(iOS 13, *)
+    
+    func startSignInWithAppleFlow() async throws -> SignInWithAppleResult {
+        try await withCheckedThrowingContinuation { continuation in
+            self.startSignInWithAppleFlow { result in
+                switch result {
+                case .success(let signInAppleResult):
+                    continuation.resume(returning: signInAppleResult)
+                    return
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
     func startSignInWithAppleFlow(completion: @escaping (Result<SignInWithAppleResult, Error>) -> Void) {
         guard let topVC = Utilities.shared.topViewController() else {
             completion(.failure(URLError(.badURL)))
@@ -99,17 +114,17 @@ extension SignInAppleHelper: ASAuthorizationControllerDelegate {
             let appleIDToken = appleIDCredential.identityToken,
             let idTokenString = String(data: appleIDToken, encoding: .utf8),
             let nonce = currentNonce else {
-            completionHandler(.failure(URLError(.badURL)))
+            completionHandler?(.failure(URLError(.badURL)))
             return
         }
         let result = SignInWithAppleResult(token: idTokenString, nonce: nonce, fullName: appleIDCredential.fullName)
-        completionHandler(.failure(URLError(.badURL)))
+        completionHandler?(.failure(URLError(.badURL)))
     }
     
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         // Handle error.
-        azLog("에러가 났어요~")
+        print("Error")
     }
 }
 

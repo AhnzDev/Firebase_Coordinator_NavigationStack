@@ -11,14 +11,11 @@ import GoogleSignInSwift
 import FirebaseAuth
 import _AuthenticationServices_SwiftUI
 import CryptoKit
+import KakaoSDKUser
 
 
 @MainActor
 final class AuthenticationViewModel: ObservableObject {
-    
-  
-    @Published var didSignInWithApple: Bool = false
-    let helper = SignInAppleHelper()
     
     func signInGoogle() async throws{
         let helper = SignInGoogleHelper()
@@ -28,19 +25,46 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     func signInApple() async throws{
-        helper.startSignInWithAppleFlow()
-        startSignInWithAppleFlow()
-        /*
-         do {
-             try await AuthenticationManager.shared.signInWithApple(tokens: result)
-             didSignInWithApple = true
-         } catch {
-             didSignInWithApple = false
-         }
-         */
+        let helper = SignInAppleHelper()
+        let tokens = try await helper.startSignInWithAppleFlow()
+        try await AuthenticationManager.shared.signInWithApple(tokens: tokens)
     }
     
-  
+    func signInKakao() async throws {
+        // 카카오톡 실행 가능 여부 확인
+        if (UserApi.isKakaoTalkLoginAvailable()) {
+            UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    print("loginWithKakaoTalk() success.")
+                    
+                    // 성공 시 동작 구현
+                    _ = oauthToken
+                    UserApi.shared.me { user, error in
+                        guard let account = user?.kakaoAccount else {
+                            print("카카오 계정 정보 없음")
+                            return
+                        }
+
+                        if let email = account.email {
+                            print("✅ 이메일: \(email)")
+                        } else if account.emailNeedsAgreement == true {
+                            print("⚠️ 이메일 항목에 대해 추가 동의 필요")
+                        } else {
+                            print("❌ 이메일 없음 또는 제공 불가")
+                        }
+                    }
+                }
+                
+                
+            }
+        } else {
+            
+        }
+
+    }
 }
 
 
@@ -81,6 +105,7 @@ struct AuthenticationView: View {
                     Task {
                         do {
                             try await viewModel.signInApple()
+                            showSignInView = false
                         } catch {
                             print(error)
                         }
@@ -90,20 +115,29 @@ struct AuthenticationView: View {
                         .allowsHitTesting(false)
                 }
                 .frame(height: 55)
-                .onChange(of: viewModel.didSignInWithApple) { newValue in
-                    if newValue {
-                        viewModel.startSignInWithAppleFlow()
+                
+                Button {
+                    Task {
+                        do {
+                            try await viewModel.signInKakao()
+                            
+                        } catch {
+                            print(error)
+                        }
                     }
+                } label: {
+                    Text("KaKao")
                 }
-                
-                
-                
+                .frame(height: 55)
             }
             .padding()
             .navigationTitle("Sing In")
             .navigationDestination(for: ViewOption.self) { option in
                 option.view()
             }
+            .onAppear(perform: {
+                debugPrint(#fileID,#function,"ahnz - ")
+            })
             .navigationDestination(for: BindingViewOption.self) { bindingViewOption in
                 switch bindingViewOption {
                 case .signInEmail:
