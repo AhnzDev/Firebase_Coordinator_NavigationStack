@@ -59,6 +59,7 @@ final class AuthenticationManager {
     
 }
 //MARK: SIGN IN EMAIL
+/// 카카오 로그인 시 이메일과 토큰으로 로그인함
 extension AuthenticationManager {
     @discardableResult
     func createUser(email: String, password: String) async throws ->AuthDataResultModel {
@@ -107,6 +108,17 @@ extension AuthenticationManager {
     
     @discardableResult
     func signInWithApple(tokens: SignInWithAppleResult) async throws -> AuthDataResultModel{
+        // Initialize a Firebase credential, including the user's full name.
+        
+        let credential = OAuthProvider.appleCredential(withIDToken: tokens.token,
+                                                       rawNonce: tokens.nonce,
+                                                       fullName: tokens.fullName)
+    // Sign in with Firebase.
+        return  try await signIn(credential: credential)
+    }
+    
+    @discardableResult
+    func signInWithKaKao(tokens: SignInWithAppleResult) async throws -> AuthDataResultModel{
         // Initialize a Firebase credential, including the user's full name.
         
         let credential = OAuthProvider.appleCredential(withIDToken: tokens.token,

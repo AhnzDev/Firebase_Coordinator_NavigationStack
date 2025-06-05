@@ -31,39 +31,10 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     func signInKakao() async throws {
-        // 카카오톡 실행 가능 여부 확인
-        if (UserApi.isKakaoTalkLoginAvailable()) {
-            UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
-                if let error = error {
-                    print(error)
-                }
-                else {
-                    print("loginWithKakaoTalk() success.")
-                    
-                    // 성공 시 동작 구현
-                    _ = oauthToken
-                    UserApi.shared.me { user, error in
-                        guard let account = user?.kakaoAccount else {
-                            print("카카오 계정 정보 없음")
-                            return
-                        }
-
-                        if let email = account.email {
-                            print("✅ 이메일: \(email)")
-                        } else if account.emailNeedsAgreement == true {
-                            print("⚠️ 이메일 항목에 대해 추가 동의 필요")
-                        } else {
-                            print("❌ 이메일 없음 또는 제공 불가")
-                        }
-                    }
-                }
-                
-                
-            }
-        } else {
-            
-        }
-
+        let helper = SignInKakaoHelper()
+        let tokens = try await helper.singIn()
+        try await AuthenticationManager.shared.signInUser(email: tokens.email ?? "", password: tokens.idToken)
+        
     }
 }
 
