@@ -15,6 +15,7 @@
 		E96B9EDC2DEF2633000E9FF4 /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E96B9EDB2DEF2633000E9FF4 /* KakaoSDK */; };
 		E96B9EDE2DEF2633000E9FF4 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E96B9EDD2DEF2633000E9FF4 /* KakaoSDKAuth */; };
 		E96B9EE02DEF2633000E9FF4 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = E96B9EDF2DEF2633000E9FF4 /* KakaoSDKCommon */; };
+		E9FA6E8E2E151DED0004EBAA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E9FA6E8D2E151DED0004EBAA /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 				E96B9ED92DEF2615000E9FF4 /* Alamofire in Frameworks */,
 				E95BC8512DC213D3006F9128 /* FirebaseAnalytics in Frameworks */,
 				E95BC8672DC22621006F9128 /* FirebaseAuth in Frameworks */,
+				E9FA6E8E2E151DED0004EBAA /* FirebaseFirestore in Frameworks */,
 				E90330462DE59AB2007D7E89 /* GoogleSignIn in Frameworks */,
 				E90330482DE59AB2007D7E89 /* GoogleSignInSwift in Frameworks */,
 				E96B9EDC2DEF2633000E9FF4 /* KakaoSDK in Frameworks */,
@@ -107,11 +109,11 @@
 		E95BC8132DC210D5006F9128 = {
 			isa = PBXGroup;
 			children = (
+				E95BC8652DC22621006F9128 /* Frameworks */,
+				E95BC81D2DC210D5006F9128 /* Products */,
 				E95BC81E2DC210D5006F9128 /* SwiftUIFireBase */,
 				E95BC82F2DC210D7006F9128 /* SwiftUIFireBaseTests */,
 				E95BC8392DC210D7006F9128 /* SwiftUIFireBaseUITests */,
-				E95BC8652DC22621006F9128 /* Frameworks */,
-				E95BC81D2DC210D5006F9128 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -160,6 +162,7 @@
 				E96B9EDB2DEF2633000E9FF4 /* KakaoSDK */,
 				E96B9EDD2DEF2633000E9FF4 /* KakaoSDKAuth */,
 				E96B9EDF2DEF2633000E9FF4 /* KakaoSDKCommon */,
+				E9FA6E8D2E151DED0004EBAA /* FirebaseFirestore */,
 			);
 			productName = SwiftUIFireBase;
 			productReference = E95BC81C2DC210D5006F9128 /* SwiftUIFireBase.app */;
@@ -694,6 +697,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E96B9EDA2DEF2633000E9FF4 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKCommon;
+		};
+		E9FA6E8D2E151DED0004EBAA /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E95BC84F2DC213D3006F9128 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

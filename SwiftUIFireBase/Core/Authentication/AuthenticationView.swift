@@ -14,31 +14,6 @@ import CryptoKit
 import KakaoSDKUser
 
 
-@MainActor
-final class AuthenticationViewModel: ObservableObject {
-    
-    func signInGoogle() async throws{
-        let helper = SignInGoogleHelper()
-        let tokens = try await helper.signIn()
-        try await AuthenticationManager.shared.signInWithGoogle(tokens: tokens)
-        
-    }
-    
-    func signInApple() async throws{
-        let helper = SignInAppleHelper()
-        let tokens = try await helper.startSignInWithAppleFlow()
-        try await AuthenticationManager.shared.signInWithApple(tokens: tokens)
-    }
-    
-    func signInKakao() async throws {
-        let helper = SignInKakaoHelper()
-        let tokens = try await helper.singIn()
-        try await AuthenticationManager.shared.signInUser(email: tokens.email ?? "", password: tokens.idToken)
-        
-    }
-}
-
-
 
 
 struct AuthenticationView: View {
@@ -91,7 +66,7 @@ struct AuthenticationView: View {
                     Task {
                         do {
                             try await viewModel.signInKakao()
-                            
+                            showSignInView = false
                         } catch {
                             print(error)
                         }
@@ -116,6 +91,13 @@ struct AuthenticationView: View {
                 case .googleSignIn:
                     EmptyView()
                 }
+            }
+            .alert("로그인 오류", isPresented: $viewModel.showError) {
+                Button("확인") {
+                    viewModel.clearError()
+                }
+            } message: {
+                Text(viewModel.errorMessage)
             }
         }
     }

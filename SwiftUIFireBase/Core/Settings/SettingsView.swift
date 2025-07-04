@@ -7,41 +7,6 @@
 
 import SwiftUI
 
-@MainActor
-final class SettingsViewModel: ObservableObject {
-    
-    @Published var authProviders: [AuthProviderOption] = []
-    
-    func loadAuthProviders() {
-        if let providers = try? AuthenticationManager.shared.getProviders() {
-            authProviders = providers
-        }
-    }
-    
-    func logOut() throws {
-        try AuthenticationManager.shared.signOut()
-    }
-    
-    func resetPassword() async throws {
-        let authUser = try AuthenticationManager.shared.getAuthenticatedUser()
-        
-        guard let email = authUser.email else {
-            throw URLError(.fileDoesNotExist)
-        }
-        try await AuthenticationManager.shared.resetPassword(email: email)
-    }
-    
-    func updateEmail() async throws {
-        let email = "TestTest123@gmail.com"
-        try await AuthenticationManager.shared.updateEmail(email: email)
-    }
-    
-    func updatePassword() async throws {
-        let password = "Hello123!"
-        try await AuthenticationManager.shared.updatePassword(password: password)
-    }
-}
-
 struct SettingsView: View {
     
     @StateObject private var viewModel = SettingsViewModel()
@@ -71,6 +36,47 @@ struct SettingsView: View {
 //            AZLogger.azOsLog("앱이 실행 됐습니다",level: .error)
         }
         .navigationTitle("Settings")
+        // ✅ 새로운 이메일 입력 다이얼로그
+        .alert("이메일 변경", isPresented: $viewModel.showEmailUpdateAlert) {
+            TextField("새 이메일 주소", text: $viewModel.newEmail)
+            Button("다음") {
+                Task {
+                    do {
+                        try await viewModel.updateEmail()
+                    } catch {
+                        viewModel.alertMessage = "이메일 변경 실패: \(error.localizedDescription)"
+                        viewModel.showAlert = true
+                    }
+                }
+            }
+            Button("취소", role: .cancel) {
+                viewModel.clearAlerts()
+            }
+        } message: {
+            Text("새로운 이메일 주소를 입력해주세요.")
+        }
+        // ✅ 비밀번호 확인 다이얼로그 (이메일/패스워드 사용자용)
+        .alert("현재 비밀번호 확인", isPresented: $viewModel.showPasswordPrompt) {
+            SecureField("현재 비밀번호", text: $viewModel.currentPassword)
+            Button("변경") {
+                Task {
+                    try await viewModel.updateEmailWithPassword()
+                }
+            }
+            Button("취소", role: .cancel) {
+                viewModel.clearAlerts()
+            }
+        } message: {
+            Text("보안을 위해 현재 비밀번호를 입력해주세요.")
+        }
+        // ✅ 일반 알림 다이얼로그
+        .alert("알림", isPresented: $viewModel.showAlert) {
+            Button("확인") {
+                viewModel.clearAlerts()
+            }
+        } message: {
+            Text(viewModel.alertMessage)
+        }
     }
 }
 
@@ -105,22 +111,13 @@ extension SettingsView{
             }
             
             Button {
-                Task {
-                    do {
-                        try await viewModel.updateEmail()
-                        print("EMAIL UPDATED")
-                    } catch {
-                        print(error)
-                    }
-                }
+                viewModel.requestEmailUpdate()
             } label: {
                 Text("Update Email")
             }
         } header: {
             Text ("Email Function")
         }
-        
-        
     }
 }
 
