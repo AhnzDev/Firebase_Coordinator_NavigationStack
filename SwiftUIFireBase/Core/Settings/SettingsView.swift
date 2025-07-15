@@ -24,7 +24,8 @@ struct SettingsView: View {
                     }
                 }
             } label: {
-                Text("Log Out")
+//                Text("Log Out")
+                CustomView()
             }
             
             if viewModel.authProviders.contains(.email) {
@@ -124,5 +125,17 @@ extension SettingsView{
 #Preview {
     NavigationStack {
         SettingsView(showSignInView: Binding.constant(false))
+    }
+}
+
+struct CustomView: View {
+    var body: some View {
+        HStack(spacing: 50){
+            Image(systemName: "bolt")
+                .foregroundStyle(.black)
+                .clipShape(.capsule)
+            Text("볼트")
+                .foregroundStyle(.black)
+        }
     }
 }

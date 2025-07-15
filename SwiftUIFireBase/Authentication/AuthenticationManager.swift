@@ -70,7 +70,7 @@ final class AuthenticationManager {
 /// 카카오 로그인 시 이메일과 토큰으로 로그인함
 extension AuthenticationManager {
     @discardableResult
-    func createUser(email: String, password: String) async throws ->AuthDataResultModel {
+    func createUser(email: String, password: String) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().createUser(withEmail: email, password: password)
         return AuthDataResultModel(user: authDataResult.user)
     }

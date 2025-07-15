@@ -7,7 +7,9 @@
 
 class UserManager {
     static var shared = UserManager()
+    
     private init() { }
+    
     
     
 }
