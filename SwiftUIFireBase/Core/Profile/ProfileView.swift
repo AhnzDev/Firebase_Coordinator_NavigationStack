@@ -10,10 +10,11 @@ import SwiftUI
 @MainActor
 final class ProfileViewModel: ObservableObject {
     
-    @Published private(set) var user: AuthDataResultModel? = nil
+    @Published private(set) var user: DBUser? = nil
     
-    func loadCurrentUser() throws {
-        self.user = try AuthenticationManager.shared.getAuthenticatedUser()
+    func loadCurrentUser() async throws {
+        let authDataResultModel = try AuthenticationManager.shared.getAuthenticatedUser()
+        self.user = try await UserManager.shared.getUser(userID: authDataResultModel.uid)
     }
 }
 
@@ -24,12 +25,17 @@ struct ProfileView: View {
     var body: some View {
         List {
             if let user = viewModel.user {
-                Text("UserId: \(user.uid)")
-            }
+                Text("UserId: \(String(describing: user.userId))")
+            } 
         }
         .onAppear {
             Task {
-                try? viewModel.loadCurrentUser()
+                try? await viewModel.loadCurrentUser()
+                
+                // 로그인 안 되어 있으면 띄우기
+                if viewModel.user == nil {
+                    showSignInView = true
+                }
             }
         }
         .navigationTitle(Text("Profile"))

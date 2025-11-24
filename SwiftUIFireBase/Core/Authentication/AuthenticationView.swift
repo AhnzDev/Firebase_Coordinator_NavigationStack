@@ -47,6 +47,9 @@ struct AuthenticationView: View {
                         }
                     }
                 }
+                .frame(height: 55)
+                .frame(maxWidth: .infinity)
+                
                 Button {
                     Task {
                         do {
@@ -60,9 +63,9 @@ struct AuthenticationView: View {
                     SignInWithAppleButtonViewRepresentable(type: .default, style: .black)
                         .allowsHitTesting(false)
                 }
-                .frame(height: 55)
+                .frame(height: 50)
                 
-                Button {
+                KakaoLoginButton {
                     Task {
                         do {
                             try await viewModel.signInKakao()
@@ -71,10 +74,7 @@ struct AuthenticationView: View {
                             print(error)
                         }
                     }
-                } label: {
-                    Text("KaKao")
                 }
-                .frame(height: 55)
             }
             .padding()
             .navigationTitle("Sing In")
@@ -107,4 +107,31 @@ struct AuthenticationView: View {
     AuthenticationView(showSignInView: .constant(false))
         .environmentObject(NavigationPathFinder.shared)
     
+}
+
+struct KakaoLoginButton: View {
+    var action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: "message.fill") // 카카오 로고 대신 심볼 사용 (임시)
+                    .resizable()
+                    .frame(width: 18, height: 18)
+                    .foregroundColor(.black)
+                
+                Text("카카오로 로그인")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.black)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 50)
+            .background(Color(red: 1.0, green: 0.9, blue: 0.0)) // #FEE500 (카카오 노란색)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.black.opacity(0.1), lineWidth: 0.5)
+            )
+        }
+    }
 }

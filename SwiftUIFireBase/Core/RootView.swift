@@ -21,6 +21,7 @@ struct RootView: View {
                 }
             }
         }
+        .padding()
         .onAppear() {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
             self.naviPathFinder.showInEmailView = authUser == nil ? true : false
@@ -31,6 +32,7 @@ struct RootView: View {
             }
             .environmentObject(naviPathFinder)
         }
+        
         
     }
 }
