@@ -7,8 +7,8 @@
 import Foundation
 import FirebaseFirestore
 
-struct DBUser {
-    let userId: String?
+struct DBUser: Codable { // Encodable & Decodable
+    let userId: String
     let email: String?
     let photoURL: String?
     let dataCreated: Date?
@@ -18,6 +18,28 @@ class UserManager {
     
     static var shared = UserManager()
     private init() { }
+    
+    private let userCollection = Firestore.firestore().collection("users")
+    
+    private func userDocument(userId: String) -> DocumentReference {
+        userCollection.document(userId)
+    }
+    
+    private let enCoder: Firestore.Encoder = {
+        let encoder = Firestore.Encoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        return encoder
+    }()
+    
+    private let deCoder: Firestore.Decoder = {
+        let decoder = Firestore.Decoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }()
+    
+    func createNewUser(user:DBUser) async throws {
+        try userDocument(userId: user.userId).setData(from: user, merge: false, encoder: enCoder)
+    }
     
     func createNewUser(auth: AuthDataResultModel) async throws {
         var userData: [String: Any] = [
@@ -31,22 +53,27 @@ class UserManager {
             userData["photo_url"] = photoURL
         }
         
-        try await Firestore.firestore().collection("users").document(auth.uid).setData(userData, merge: false)
+        try await userDocument(userId: auth.uid).setData(userData, merge: false)
     }
     
     func getUser(userID: String) async throws -> DBUser {
-        let snapshot = try await Firestore.firestore().collection("users").document(userID).getDocument()
+        try await userDocument(userId: userID).getDocument(as: DBUser.self)
         
-        guard let data = snapshot.data(), let userId = data["user_id"] as? String else {
-            throw URLError(.badServerResponse)
-        }
-        
-        let email = data["email"] as? String
-        let photoURL = data["photo_url"] as? String
-        let dataCreated = data["data_created"] as? Date
-        
-        return DBUser(userId: userID, email: email, photoURL: photoURL, dataCreated: dataCreated)
     }
-    
+//    
+//    func getUser(userID: String) async throws -> DBUser {
+//        let snapshot = try await userDocument(userId: userID).getDocument()
+//        
+//        guard let data = snapshot.data(), let userId = data["user_id"] as? String else {
+//            throw URLError(.badServerResponse)
+//        }
+//        
+//        let email = data["email"] as? String
+//        let photoURL = data["photo_url"] as? String
+//        let dataCreated = data["data_created"] as? Date
+//        
+//        return DBUser(userId: userID, email: email, photoURL: photoURL, dataCreated: dataCreated)
+//    }
+//    
    
 }

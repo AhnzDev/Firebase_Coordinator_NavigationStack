@@ -30,7 +30,9 @@ final class AuthenticationViewModel: ObservableObject {
         let helper = SignInKakaoHelper()
         let tokens = try await helper.singIn()
         let auth = try await AuthenticationManager.shared.signInWithKaKao(tokens: tokens)
-        try await UserManager.shared.createNewUser(auth: auth)
+        let user = DBUser(userId: auth.uid, email: auth.email, photoURL: auth.photoURL, dataCreated: Date())
+        try await UserManager.shared.createNewUser(user: user)
+//        try await UserManager.shared.createNewUser(auth: auth)
     }
     
     func clearError() {
