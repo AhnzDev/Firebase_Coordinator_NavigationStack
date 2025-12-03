@@ -16,21 +16,23 @@ final class AuthenticationViewModel: ObservableObject {
         let helper = SignInGoogleHelper()
         let tokens = try await helper.signIn()
         let auth = try await AuthenticationManager.shared.signInWithGoogle(tokens: tokens)
-        try await UserManager.shared.createNewUser(auth: auth)
+        let user = DBUser(auth: auth)
+        try await UserManager.shared.createNewUser(user: user)
     }
     
     func signInApple() async throws{
         let helper = SignInAppleHelper()
         let tokens = try await helper.startSignInWithAppleFlow()
         let auth = try await AuthenticationManager.shared.signInWithApple(tokens: tokens)
-        try await UserManager.shared.createNewUser(auth: auth)
+        let user = DBUser(auth: auth)
+        try await UserManager.shared.createNewUser(user: user)
     }
     
     func signInKakao() async throws {
         let helper = SignInKakaoHelper()
         let tokens = try await helper.singIn()
         let auth = try await AuthenticationManager.shared.signInWithKaKao(tokens: tokens)
-        let user = DBUser(userId: auth.uid, email: auth.email, photoURL: auth.photoURL, dataCreated: Date())
+        let user = DBUser(auth: auth)
         try await UserManager.shared.createNewUser(user: user)
 //        try await UserManager.shared.createNewUser(auth: auth)
     }
