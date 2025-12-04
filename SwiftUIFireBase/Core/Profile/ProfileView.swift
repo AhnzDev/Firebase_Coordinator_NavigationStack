@@ -15,14 +15,21 @@ final class ProfileViewModel: ObservableObject {
     func loadCurrentUser() async throws {
         let authDataResultModel = try AuthenticationManager.shared.getAuthenticatedUser()
         self.user = try await UserManager.shared.getUser(userID: authDataResultModel.uid)
+        debugPrint(#fileID,#function,"ahnz - \(user)")
     }
     
     func togglePremiumStatus() {
         guard let user else { return }
         let currentValue = user.isPremium ?? false
-        let updatedUser = DBUser(userId: user.userId, email: user.email, photoURL: user.photoURL, dataCreated: user.dataCreated, isPremium: !currentValue)
+        
+//        user.togglePremiumStatus()
+//        let currentValue = user.isPremium ?? false
+//        user.isPremium = !currentValue
+//        let updatedUser = user.togglePremiumStatus()
         Task {
-            try await UserManager.shared.updateUserPremiumStatus(user: updatedUser)
+            try await UserManager.shared.updateUserPremiumStatus(userId: user.userId, isPremium: !currentValue)
+//            try await UserManager.shared.updateUserPremiumStatus(user: user)
+            self.user = try await UserManager.shared.getUser(userID: user.userId)
         }
         
     }
@@ -47,6 +54,7 @@ struct ProfileView: View {
         }
         .onAppear {
             Task {
+                
                 try? await viewModel.loadCurrentUser()
                 
                 // 로그인 안 되어 있으면 띄우기
