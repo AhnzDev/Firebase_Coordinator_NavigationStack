@@ -13,11 +13,13 @@ struct AuthDataResultModel {
     let uid: String
     let email: String?
     let photoURL: String?
+    let isAnonymous: Bool
     
     init(user: User) {
         self.uid = user.uid
         self.email = user.email
         self.photoURL = user.photoURL?.absoluteString
+        self.isAnonymous = user.isAnonymous
     }
 }
 
@@ -31,6 +33,12 @@ final class AuthenticationManager {
     
     static let shared = AuthenticationManager()
     private init() { }
+    
+    @discardableResult
+    func signInAnonymous() async throws -> AuthDataResultModel {
+        let authDataResult = try await Auth.auth().signInAnonymously()
+        return AuthDataResultModel(user: authDataResult.user)
+    }
     
     // 카카오 액세스 토큰을 Firebase 패스워드로 변환
     private func hashKakaoToken(_ token: String) -> String {

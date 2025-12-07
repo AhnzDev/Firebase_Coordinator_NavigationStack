@@ -8,6 +8,7 @@ import Foundation
 import FirebaseFirestore
 
 struct DBUser: Codable { // Encodable & Decodable
+    let isAnonymous: Bool?
     let userId: String
     let email: String?
     let photoURL: String?
@@ -15,6 +16,7 @@ struct DBUser: Codable { // Encodable & Decodable
     let isPremium: Bool?
     
     init(auth: AuthDataResultModel){
+        self.isAnonymous = auth.isAnonymous
         self.userId = auth.uid
         self.email = auth.email
         self.photoURL = auth.photoURL
@@ -23,12 +25,14 @@ struct DBUser: Codable { // Encodable & Decodable
     }
     
     init(
+        isAnonymous: Bool? = nil,
         userId: String,
         email: String? = nil,
         photoURL: String? = nil,
         dataCreated: Date? = nil,
         isPremium: Bool? = nil
     ) {
+        self.isAnonymous = isAnonymous
         self.userId = userId
         self.email = email
         self.photoURL = photoURL
@@ -52,15 +56,17 @@ struct DBUser: Codable { // Encodable & Decodable
     
     
     enum CodingKeys: String, CodingKey {
+        case isAnonymous = "is_anonymous"
         case userId = "user_id"
         case email = "email"
         case photoURL = "photo_url"
         case dataCreated = "date_created"
-        case isPremium = "is_premium"
+        case isPremium = "is_premium "
     }
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.isAnonymous, forKey: .isAnonymous)
         try container.encode(self.userId, forKey: .userId)
         try container.encodeIfPresent(self.email, forKey: .email)
         try container.encodeIfPresent(self.photoURL, forKey: .photoURL)
@@ -71,6 +77,7 @@ struct DBUser: Codable { // Encodable & Decodable
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.isAnonymous = try container.decode(Bool.self, forKey: .isAnonymous)
         self.userId = try container.decode(String.self, forKey: .userId)
         self.email = try container.decodeIfPresent(String.self, forKey: .email)
         self.photoURL = try container.decodeIfPresent(String.self, forKey: .photoURL)
@@ -90,20 +97,20 @@ class UserManager {
         userCollection.document(userId)
     }
     
-    private let encoder: Firestore.Encoder = {
-        let encoder = Firestore.Encoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
-        return encoder
-    }()
-    
-    private let decoder: Firestore.Decoder = {
-        let decoder = Firestore.Decoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return decoder
-    }()
+//    private let encoder: Firestore.Encoder = {
+//        let encoder = Firestore.Encoder()
+//        encoder.keyEncodingStrategy = .convertToSnakeCase
+//        return encoder
+//    }()
+//    
+//    private let decoder: Firestore.Decoder = {
+//        let decoder = Firestore.Decoder()
+//        decoder.keyDecodingStrategy = .convertFromSnakeCase
+//        return decoder
+//    }()
     
     func createNewUser(user:DBUser) async throws {
-        try userDocument(userId: user.userId).setData(from: user, merge: false, encoder: encoder)
+        try userDocument(userId: user.userId).setData(from: user, merge: false)
     }
 //    
 //    func createNewUser(auth: AuthDataResultModel) async throws {
@@ -122,7 +129,7 @@ class UserManager {
 //    }
     
     func getUser(userID: String) async throws -> DBUser {
-        try await userDocument(userId: userID).getDocument(as: DBUser.self, decoder: decoder)
+        try await userDocument(userId: userID).getDocument(as: DBUser.self)
         
     }
 //    
@@ -141,15 +148,19 @@ class UserManager {
 //    }
 //
     
-    func updateUserPremiumStatus(user: DBUser) async throws {
-        try userDocument(userId: user.userId).setData(from: user, merge: true, encoder: encoder)
-    }
+//    func updateUserPremiumStatus(user: DBUser) async throws {
+//        try userDocument(userId: user.userId).setData(from: user, merge: true)
+//    }
    
     func updateUserPremiumStatus(userId: String,isPremium: Bool) async throws {
-        var data: [String: Any] = [
+        let data: [String: Any] = [
             DBUser.CodingKeys.isPremium.rawValue : isPremium
         ]
         try await userDocument(userId: userId).updateData(data)
     }
+    
+    
+    
+    
 
 }

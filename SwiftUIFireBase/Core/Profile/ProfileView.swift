@@ -49,6 +49,26 @@ struct ProfileView: View {
                 }label: {
                     Text("User is premium: \((user.isPremium ?? false).description.capitalized)")
                 }
+                
+                HStack {
+                    Button("Sports") {
+                        
+                    }
+                    .font(.headline)
+                    .buttonStyle(.borderedProminent)
+                    
+                    Button("Movies") {
+                        
+                    }
+                    .font(.headline)
+                    .buttonStyle(.borderedProminent)
+                    
+                    Button("Books") {
+                        
+                    }
+                    .font(.headline)
+                    .buttonStyle(.borderedProminent)
+                }
             }
            
         }
@@ -79,7 +99,8 @@ struct ProfileView: View {
 }
 
 #Preview {
-    NavigationStack{
-        ProfileView(showSignInView: .constant(false))
-    }
+//    NavigationStack{
+//        ProfileView(showSignInView: .constant(false))
+//    }
+    RootView()
 }

@@ -12,6 +12,12 @@ final class AuthenticationViewModel: ObservableObject {
     @Published var errorMessage: String = ""
     @Published var showError: Bool = false
     
+    func signInAnonymous() async throws {
+        let authDataResult = try await AuthenticationManager.shared.signInAnonymous()
+        let user = DBUser(auth: authDataResult)
+        try await UserManager.shared.createNewUser(user: user)
+    }
+    
     func signInGoogle() async throws{
         let helper = SignInGoogleHelper()
         let tokens = try await helper.signIn()

@@ -26,6 +26,25 @@ struct AuthenticationView: View {
     var body: some View {
         NavigationStack(path: $naviPathFinder.path){
             VStack {
+                Button(action: {
+                    Task {
+                        do {
+                            try await viewModel.signInAnonymous()
+                            showSignInView = false
+                        } catch {
+                            print(error)
+                        }
+                    }
+                }, label: {
+                    Text("Sign In Anonymously")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(height: 55)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.orange)
+                        .cornerRadius(10)
+                })
+                
                 Text("Sign In with Email")
                     .font(.headline)
                     .foregroundStyle(.white)
