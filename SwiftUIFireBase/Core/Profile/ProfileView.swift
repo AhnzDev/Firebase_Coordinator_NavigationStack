@@ -33,11 +33,58 @@ final class ProfileViewModel: ObservableObject {
         }
         
     }
+    
+    func addUserPreference(text: String) {
+        guard let user else { return }
+        
+        Task {
+            try await UserManager.shared.addUserPreferences(userId:  user.userId, preference: text)
+//            try await UserManager.shared.updateUserPremiumStatus(user: user)
+            self.user = try await UserManager.shared.getUser(userID: user.userId)
+        }
+    }
+    
+    func removeUserPreference(text: String) {
+        guard let user else { return }
+        
+        Task {
+            try await UserManager.shared.removeUserPreferences(userId:  user.userId, preference: text)
+//            try await UserManager.shared.updateUserPremiumStatus(user: user)
+            self.user = try await UserManager.shared.getUser(userID: user.userId)
+        }
+    }
+    
+    
+    func addFavoriteMovies(text: String) {
+        guard let user else { return }
+        let movies = Movies(id: "1", title: "Avatar 3", isPopular: true)
+        Task {
+            try await UserManager.shared.addUserFavoriteMovie(userId: user.userId, movies: movies)
+//            try await UserManager.shared.updateUserPremiumStatus(user: user)
+            self.user = try await UserManager.shared.getUser(userID: user.userId)
+        }
+    }
+    
+    func removeFavoriteMovies() {
+        guard let user else { return }
+        let movies = Movies(id: "1", title: "Avatar 3", isPopular: true)
+        Task {
+            try await UserManager.shared.removeUserFavoriteMovie(userId: user.userId)
+//            try await UserManager.shared.updateUserPremiumStatus(user: user)
+            self.user = try await UserManager.shared.getUser(userID: user.userId)
+        }
+    }
 }
 
 struct ProfileView: View {
     @Binding var showSignInView: Bool
     @StateObject private var viewModel = ProfileViewModel()
+    
+    let preferenceOption: [String] = ["Sports", "Movies", "Books"]
+    
+    private func preferenceIsSelected(text: String) -> Bool {
+        viewModel.user?.preferences?.contains(text) == true
+    }
     
     var body: some View {
         List {
@@ -51,26 +98,34 @@ struct ProfileView: View {
                 }
                 
                 HStack {
-                    Button("Sports") {
-                        
+                    ForEach(preferenceOption, id: \.self) { string in
+                        Button(string) {
+                            if preferenceIsSelected(text: string) {
+                                viewModel.removeUserPreference(text: string)
+                            } else {
+                                viewModel.addUserPreference(text: string)
+                            }
+                        }
+                        .font(.headline)
+                        .buttonStyle(.borderedProminent)
+                        .tint( preferenceIsSelected(text: string) ? .green : .red)
                     }
-                    .font(.headline)
-                    .buttonStyle(.borderedProminent)
                     
-                    Button("Movies") {
-                        
-                    }
-                    .font(.headline)
-                    .buttonStyle(.borderedProminent)
                     
-                    Button("Books") {
-                        
+                }
+                
+                Text("User preferences: \((user.preferences ?? []).joined(separator: ","))")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button {
+                    if user.favoriteMovies == nil {
+                        viewModel.addFavoriteMovies(text: "Avartar")
+                    } else {
+                        viewModel.removeFavoriteMovies()
                     }
-                    .font(.headline)
-                    .buttonStyle(.borderedProminent)
+                } label: {
+                    Text("Favorite Movies: \(user.favoriteMovies?.title ?? "")")
                 }
             }
-           
         }
         .onAppear {
             Task {
