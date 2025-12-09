@@ -75,7 +75,7 @@ struct DBUser: Codable { // Encodable & Decodable
         case email = "email"
         case photoURL = "photo_url"
         case dataCreated = "date_created"
-        case isPremium = "is_premium "
+        case isPremium = "is_premium"
         case preferences = "preferences"
         case favoriteMovies = "favorite_movies"
     }
@@ -207,7 +207,7 @@ class UserManager {
         let data: [String: Any?] = [
             DBUser.CodingKeys.favoriteMovies.rawValue : nil
         ]
-        try await userDocument(userId: userId).updateData(data as [AnyHashable : Any]) 
+        try await userDocument(userId: userId).updateData(data as [AnyHashable : Any])
     }
 
 }
