@@ -11,6 +11,8 @@ import FirebaseFirestore
 @MainActor
 final class ProductViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
+    @Published var selectedFilter: FilterOption?
+    @Published var categoryFilter: CategoryOption?
     
     
         func downloadProductsAndUploadToFirebase() {
@@ -41,6 +43,52 @@ final class ProductViewModel: ObservableObject {
             } catch {
                 print(error)
             }
+        }
+    }
+    
+    
+    enum FilterOption: String, CaseIterable {
+        case noFilter
+        case priceHigh
+        case priceLow
+    }
+    
+    func filterSelected(option: FilterOption) async throws {
+        switch option {
+        case .noFilter:
+            self.products = try await ProductsManager.shared.getAllProducts()
+            self.selectedFilter = option
+        case .priceHigh:
+            self.products = try await ProductsManager.shared.getAllProductsSortedByPrice(descending: true)
+            self.selectedFilter = option
+        case .priceLow:
+            self.products = try await ProductsManager.shared.getAllProductsSortedByPrice(descending: false)
+            self.selectedFilter = option
+        }
+    }
+    
+    enum CategoryOption: String, CaseIterable {
+        case noCategory
+        case smartphones
+        case laptops
+        case fragrances
+        
+//        var categoryKey: String? {
+//            if self == .noCategory {
+//                return nil
+//            }
+//            return self.rawValue
+//        }
+    }
+    
+    func categorySelected(option: CategoryOption) async throws {
+        switch option {
+        case .noCategory:
+            self.products = try await ProductsManager.shared.getAllProducts()
+            self.categoryFilter = option
+        case .smartphones, .laptops, .fragrances:
+            self.products = try await ProductsManager.shared.getAllProductsForCategory(category:option.rawValue)
+            self.categoryFilter = option
         }
     }
 }

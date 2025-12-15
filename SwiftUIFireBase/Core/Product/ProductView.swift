@@ -27,7 +27,32 @@ struct ProductView: View {
             }
         }
         .navigationTitle("Products")
-        .onAppear {
+        .toolbar(content: {
+            ToolbarItem(placement: .navigation) {
+                Menu("Filter: \(viewModel.selectedFilter?.rawValue ?? "None")") {
+                    ForEach(ProductViewModel.FilterOption.allCases, id: \.self) { option in
+                        Button(option.rawValue) {
+                            Task {
+                                try? await viewModel.filterSelected(option: option)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu("Category: \(viewModel.categoryFilter?.rawValue ?? "None")") {
+                    ForEach(ProductViewModel.CategoryOption.allCases, id: \.self) { option in
+                        Button(option.rawValue) {
+                            Task {
+                                try? await viewModel.categorySelected(option: option)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        .task {
             viewModel.getProducts()
         }
     }
