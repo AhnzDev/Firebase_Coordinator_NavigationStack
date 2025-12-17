@@ -13,6 +13,7 @@ final class ProductViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published var selectedFilter: FilterOption?
     @Published var categoryFilter: CategoryOption?
+    private var lastDocument: DocumentSnapshot? = nil
     
     
     func downloadProductsAndUploadToFirebase() {
@@ -108,6 +109,14 @@ final class ProductViewModel: ObservableObject {
     func getProducts() {
         Task {
             self.products = try await ProductsManager.shared.getAllProductsByPrice(descending: selectedFilter?.priceDescending, category: categoryFilter?.categoryKey)
+        }
+    }
+    
+    func getProductByRating() {
+        Task {
+            let (newProducts, lastDocument) = try await ProductsManager.shared.getProductsByRating(count: 4, lastDocument: lastDocument)
+            self.products.append(contentsOf: newProducts)
+            self.lastDocument = lastDocument
         }
     }
 }
