@@ -69,7 +69,7 @@ class ProductsManager {
             .order(by: Product.CodingKeys.price.rawValue, descending: descending)
     }
     
-    func getAllProducts(priceDescending descending: Bool?, forCategory category: String?, count: Int) async throws -> [Product] {
+    func getAllProducts(priceDescending descending: Bool?, forCategory category: String?, count: Int, lastDocument: DocumentSnapshot?) async throws -> (product : [Product], lastDocument: DocumentSnapshot?) {
         
         var query: Query = getAllProductsQuery()
         
@@ -81,9 +81,16 @@ class ProductsManager {
             query = getAllProductsForCategoryQuery(category: category)
         }
         
-        return try await query
-            .limit(to: count)
-            .getDocuments(as: Product.self)
+        if let lastDocument {
+            return try await query
+                .limit(to: count)
+                .start(afterDocument: lastDocument)
+                .getDocumentsWithSnapShot(as: Product.self)
+        } else {
+            return try await query
+                .limit(to: count)
+                .getDocumentsWithSnapShot(as: Product.self)
+        }
     }
 
     func getProductsByRating(count: Int, lastRating: Double?) async throws -> [Product] {

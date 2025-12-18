@@ -15,12 +15,17 @@ struct ProductView: View {
     
     var body: some View {
         List {
-//            Button("FETCH MORE OBJECT") {
-//                viewModel.getProductByRating()
-//            }
             
             ForEach(viewModel.products) { product in
                 ProductCellView(product: product)
+                
+                if product == viewModel.products.last {
+                    ProgressView()
+                        .onAppear {
+                            print("PROGRESS VIEW APPEARED")
+                            viewModel.getProducts()
+                        }
+                }
 
             }
         }
