@@ -15,7 +15,6 @@ struct ProductView: View {
     
     var body: some View {
         List {
-            
             ForEach(viewModel.products) { product in
                 ProductCellView(product: product)
                 
@@ -44,7 +43,7 @@ struct ProductView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                Menu("Category: \(viewModel.categoryFilter?.rawValue ?? "None")") {
+                Menu("Category: \(viewModel.selectedCategory?.rawValue ?? "None")") {
                     ForEach(ProductViewModel.CategoryOption.allCases, id: \.self) { option in
                         Button(option.rawValue) {
                             Task {
@@ -56,7 +55,7 @@ struct ProductView: View {
             }
         })
         .task {
-            viewModel.getProducts()
+            viewModel.getProductCount()
         }
     }
 }

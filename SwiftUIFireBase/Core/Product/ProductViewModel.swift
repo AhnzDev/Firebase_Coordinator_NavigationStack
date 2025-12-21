@@ -12,7 +12,7 @@ import FirebaseFirestore
 final class ProductViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published var selectedFilter: FilterOption?
-    @Published var categoryFilter: CategoryOption?
+    @Published var selectedCategory: CategoryOption?
     private var lastDocument: DocumentSnapshot? = nil
     
     
@@ -64,6 +64,8 @@ final class ProductViewModel: ObservableObject {
     
     func filterSelected(option: FilterOption) async throws {
         self.selectedFilter = option
+        self.products = []
+        self.lastDocument = nil
         getProducts()
         
         //        switch option {
@@ -94,7 +96,9 @@ final class ProductViewModel: ObservableObject {
     }
     
     func categorySelected(option: CategoryOption) async throws {
-        self.categoryFilter = option
+        self.selectedCategory = option
+        self.products = []
+        self.lastDocument = nil
         getProducts()
         //        switch option {
         //        case .noCategory:
@@ -107,10 +111,17 @@ final class ProductViewModel: ObservableObject {
     }
     
     func getProducts() {
+        print("LAST DOC")
+        print(lastDocument)
         Task {
-            let (newProducts, lastDocument) = try await ProductsManager.shared.getProductsByRating(count: 10, lastDocument: lastDocument)
+            let (newProducts, lastDocument) = try await ProductsManager.shared.getAllProducts(priceDescending: selectedFilter?.priceDescending, forCategory: selectedCategory?.categoryKey, count: 10, lastDocument: lastDocument)
             self.products.append(contentsOf: newProducts)
-            self.lastDocument = lastDocument
+            if let lastDocument {
+                self.lastDocument = lastDocument
+            }
+            
+            print("RETURN DOC")
+            print(lastDocument)
         }
     }
     
@@ -119,6 +130,13 @@ final class ProductViewModel: ObservableObject {
             let (newProducts, lastDocument) = try await ProductsManager.shared.getProductsByRating(count: 4, lastDocument: lastDocument)
             self.products.append(contentsOf: newProducts)
             self.lastDocument = lastDocument
+        }
+    }
+    
+    func getProductCount() {
+        Task {
+            let count = try await ProductsManager.shared.getAllProductsCount()
+            print("AllCount : \(count)")
         }
     }
 }
