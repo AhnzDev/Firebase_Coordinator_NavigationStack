@@ -17,6 +17,11 @@ struct ProductView: View {
         List {
             ForEach(viewModel.products) { product in
                 ProductCellView(product: product)
+                    .contextMenu {
+                        Button("Add to favorites") {
+                            
+                        }
+                    }
                 
                 if product == viewModel.products.last {
                     ProgressView()
@@ -55,7 +60,7 @@ struct ProductView: View {
             }
         })
         .task {
-            viewModel.getProductCount()
+            viewModel.getProducts()
         }
     }
 }
