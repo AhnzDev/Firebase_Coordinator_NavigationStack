@@ -13,7 +13,16 @@ final class FavoriteViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
     
     func getFavorite() {
-        
+        Task {
+            let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
+            let userFavoriteProducts = try await UserManager.shared.getAllUserFavoriteProducts(userId: authDataResult.uid)
+            
+            for userFavoriteProduct in userFavoriteProducts {
+                let product = try await ProductsManager.shared.getProduct(productId: String(userFavoriteProduct.productId))
+                products.append(product)
+            }
+            
+        }
     }
     
 }

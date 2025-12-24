@@ -19,7 +19,7 @@ struct ProductView: View {
                 ProductCellView(product: product)
                     .contextMenu {
                         Button("Add to favorites") {
-                            
+                            viewModel.addUserFavoriteProduct(productId: product.id)
                         }
                     }
                 
