@@ -22,11 +22,11 @@ struct TabbarView: View {
             }
 
             NavigationStack {
-                Color.red
+                FavoriteView()
             }
             .tabItem {
                 Image(systemName: "star.fill")
-                Text("Products")
+                Text("Favorite")
             }
 
             NavigationStack {

@@ -28,9 +28,7 @@ struct RootView: View {
                 AuthenticationView(showSignInView: $showSignInView)
             }
             .environmentObject(naviPathFinder)
-        }
-        
-        
+        } 
     }
 }
 
