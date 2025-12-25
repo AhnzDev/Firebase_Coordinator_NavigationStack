@@ -137,6 +137,8 @@ class UserManager {
         return decoder
     }()
     
+    private var userFavoriteProductListner: ListenerRegistration? = nil
+    
     func createNewUser(user:DBUser) async throws {
         try userDocument(userId: user.userId).setData(from: user, merge: false)
     }
@@ -236,6 +238,22 @@ class UserManager {
     
     func getAllUserFavoriteProducts(userId: String) async throws -> [UserFavoriteProduct]{
         try await userFavoriteProductCollection(userId: userId).getDocuments(as: UserFavoriteProduct.self)
+    }
+    
+    func removeListnerForAllUserFavoriteProducts() {
+        self.userFavoriteProductListner?.remove()
+    }
+    
+    func addListenerForAllUserFavoriteProducts(userId: String, completion: @escaping (_ products: [UserFavoriteProduct]) -> Void) {
+        self.userFavoriteProductListner = userFavoriteProductCollection(userId: userId).addSnapshotListener { querySnapshot, error in
+            guard let document = querySnapshot?.documents else {
+                print("empty Documents")
+                return
+            }
+            let products: [UserFavoriteProduct] = document.compactMap( { try? $0.data(as: UserFavoriteProduct.self) })
+            completion(products)
+        }
+        
     }
 }
 

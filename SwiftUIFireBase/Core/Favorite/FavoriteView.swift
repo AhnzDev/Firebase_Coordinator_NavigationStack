@@ -10,28 +10,29 @@ import SwiftUI
 @MainActor
 final class FavoriteViewModel: ObservableObject {
     
-    @Published private(set) var products: [(userFavoriteProduct: UserFavoriteProduct, product: Product)] = []
+    @Published private(set) var userFavoriteProducts: [UserFavoriteProduct] = []
     
-    func getFavorite() {
-        Task {
-            let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-            let userFavoriteProducts = try await UserManager.shared.getAllUserFavoriteProducts(userId: authDataResult.uid)
-            
-            var localArray: [(userFavoriteProduct: UserFavoriteProduct, product: Product)] = []
-            
-            for userFavoriteProduct in userFavoriteProducts {
-                let product = try await ProductsManager.shared.getProduct(productId: String(userFavoriteProduct.productId))
-                localArray.append((userFavoriteProduct, product))
-            }
-            self.products = localArray
+    func addListnerForFavorites() {
+        guard let authDataResult = try? AuthenticationManager.shared.getAuthenticatedUser() else { return }
+        
+        UserManager.shared.addListenerForAllUserFavoriteProducts(userId: authDataResult.uid) { [weak self] products in
+            guard let self = self else { return }
+            self.userFavoriteProducts = products
         }
     }
+    
+//    func getFavorite() {
+//        Task {
+//            let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
+//            self.userFavoriteProducts = try await UserManager.shared.getAllUserFavoriteProducts(userId: authDataResult.uid)
+//        }
+//    }
     
     func removeFromFaorites(favoriteProductId: String) {
         Task {
             let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
             try? await UserManager.shared.removeUserFavoriteProduct(userId: authDataResult.uid, favoriteProductId: favoriteProductId)
-            getFavorite()
+//            getFavorite()
         }
     }
     
@@ -41,14 +42,14 @@ final class FavoriteViewModel: ObservableObject {
 struct FavoriteView: View {
     
     @StateObject private var viewModel: FavoriteViewModel = FavoriteViewModel()
-    
+    @State private var didAppear: Bool = false
     var body: some View {
         List {
-            ForEach(viewModel.products, id: \.userFavoriteProduct.id.self) { item in
-                ProductCellView(product: item.product)
+            ForEach(viewModel.userFavoriteProducts, id: \.id.self) { item in
+                ProductCellViewBuilder(productId: String(item.productId))
                     .contextMenu {
                         Button("Remove from favorites") {
-                            viewModel.removeFromFaorites(favoriteProductId: item.userFavoriteProduct.id)
+                            viewModel.removeFromFaorites(favoriteProductId: item.id)
                         }
                     }
                 
@@ -56,7 +57,10 @@ struct FavoriteView: View {
         }
         .navigationTitle("Favorite")
         .onAppear {
-            viewModel.getFavorite()
+            if !didAppear {
+                viewModel.addListnerForFavorites()
+                didAppear = true
+            }
         }
     }
 }
