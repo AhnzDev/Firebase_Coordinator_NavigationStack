@@ -255,7 +255,18 @@ class UserManager {
         }
         
     }
+    
+    func addListenerForAllUserFavoriteProducts(userId: String) -> AnyPublisher<[UserFavoriteProduct], Error> {
+        let (publisher, listener) = userFavoriteProductCollection(userId: userId)
+            .addSnapshotListener(as: UserFavoriteProduct.self)
+        
+        self.userFavoriteProductListner = listener
+        return publisher
+    }
+
 }
+
+import Combine
 
 struct UserFavoriteProduct: Codable {
     let id: String
