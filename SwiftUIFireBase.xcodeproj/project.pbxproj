@@ -16,6 +16,7 @@
 		E96B9EDE2DEF2633000E9FF4 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E96B9EDD2DEF2633000E9FF4 /* KakaoSDKAuth */; };
 		E96B9EE02DEF2633000E9FF4 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = E96B9EDF2DEF2633000E9FF4 /* KakaoSDKCommon */; };
 		E9FA6E8E2E151DED0004EBAA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E9FA6E8D2E151DED0004EBAA /* FirebaseFirestore */; };
+		E9FC7F412F0119B300AA5FB5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E9FC7F402F0119B300AA5FB5 /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,7 @@
 				E96B9EE02DEF2633000E9FF4 /* KakaoSDKCommon in Frameworks */,
 				E96B9EDE2DEF2633000E9FF4 /* KakaoSDKAuth in Frameworks */,
 				E96B9ED92DEF2615000E9FF4 /* Alamofire in Frameworks */,
+				E9FC7F412F0119B300AA5FB5 /* FirebaseStorage in Frameworks */,
 				E95BC8512DC213D3006F9128 /* FirebaseAnalytics in Frameworks */,
 				E95BC8672DC22621006F9128 /* FirebaseAuth in Frameworks */,
 				E9FA6E8E2E151DED0004EBAA /* FirebaseFirestore in Frameworks */,
@@ -163,6 +165,7 @@
 				E96B9EDD2DEF2633000E9FF4 /* KakaoSDKAuth */,
 				E96B9EDF2DEF2633000E9FF4 /* KakaoSDKCommon */,
 				E9FA6E8D2E151DED0004EBAA /* FirebaseFirestore */,
+				E9FC7F402F0119B300AA5FB5 /* FirebaseStorage */,
 			);
 			productName = SwiftUIFireBase;
 			productReference = E95BC81C2DC210D5006F9128 /* SwiftUIFireBase.app */;
@@ -702,6 +705,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E95BC84F2DC213D3006F9128 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		E9FC7F402F0119B300AA5FB5 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E95BC84F2DC213D3006F9128 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

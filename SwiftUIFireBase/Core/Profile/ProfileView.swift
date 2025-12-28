@@ -6,79 +6,12 @@
 //
 
 import SwiftUI
-
-@MainActor
-final class ProfileViewModel: ObservableObject {
-    
-    @Published private(set) var user: DBUser? = nil
-    
-    func loadCurrentUser() async throws {
-        let authDataResultModel = try AuthenticationManager.shared.getAuthenticatedUser()
-        self.user = try await UserManager.shared.getUser(userID: authDataResultModel.uid)
-        debugPrint(#fileID,#function,"ahnz - \(user)")
-    }
-    
-    func togglePremiumStatus() {
-        guard let user else { return }
-        let currentValue = user.isPremium ?? false
-        
-//        user.togglePremiumStatus()
-//        let currentValue = user.isPremium ?? false
-//        user.isPremium = !currentValue
-//        let updatedUser = user.togglePremiumStatus()
-        Task {
-            try await UserManager.shared.updateUserPremiumStatus(userId: user.userId, isPremium: !currentValue)
-//            try await UserManager.shared.updateUserPremiumStatus(user: user)
-            self.user = try await UserManager.shared.getUser(userID: user.userId)
-        }
-        
-    }
-    
-    func addUserPreference(text: String) {
-        guard let user else { return }
-        
-        Task {
-            try await UserManager.shared.addUserPreferences(userId:  user.userId, preference: text)
-//            try await UserManager.shared.updateUserPremiumStatus(user: user)
-            self.user = try await UserManager.shared.getUser(userID: user.userId)
-        }
-    }
-    
-    func removeUserPreference(text: String) {
-        guard let user else { return }
-        
-        Task {
-            try await UserManager.shared.removeUserPreferences(userId:  user.userId, preference: text)
-//            try await UserManager.shared.updateUserPremiumStatus(user: user)
-            self.user = try await UserManager.shared.getUser(userID: user.userId)
-        }
-    }
-    
-    
-    func addFavoriteMovies(text: String) {
-        guard let user else { return }
-        let movies = Movies(id: "1", title: "Avatar 3", isPopular: true)
-        Task {
-            try await UserManager.shared.addUserFavoriteMovie(userId: user.userId, movies: movies)
-//            try await UserManager.shared.updateUserPremiumStatus(user: user)
-            self.user = try await UserManager.shared.getUser(userID: user.userId)
-        }
-    }
-    
-    func removeFavoriteMovies() {
-        guard let user else { return }
-        let movies = Movies(id: "1", title: "Avatar 3", isPopular: true)
-        Task {
-            try await UserManager.shared.removeUserFavoriteMovie(userId: user.userId)
-//            try await UserManager.shared.updateUserPremiumStatus(user: user)
-            self.user = try await UserManager.shared.getUser(userID: user.userId)
-        }
-    }
-}
+import PhotosUI
 
 struct ProfileView: View {
     @Binding var showSignInView: Bool
     @StateObject private var viewModel = ProfileViewModel()
+    @State private var selectedItem: PhotosPickerItem? = nil
     
     let preferenceOption: [String] = ["Sports", "Movies", "Books"]
     
@@ -125,9 +58,13 @@ struct ProfileView: View {
                 } label: {
                     Text("Favorite Movies: \(user.favoriteMovies?.title ?? "")")
                 }
+                
+                PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
+                    Text("Select a Photo")
+                }
             }
         }
-        .onAppear {
+        .task {
             Task {
                 
                 try? await viewModel.loadCurrentUser()
@@ -138,6 +75,11 @@ struct ProfileView: View {
                 }
             }
         }
+        .onChange(of: selectedItem, perform: { newValue in
+            if let newValue {
+                viewModel.saveProfileImage(item: newValue)
+            }
+        })
         .navigationTitle(Text("Profile"))
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
