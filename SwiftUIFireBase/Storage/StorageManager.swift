@@ -25,9 +25,29 @@ final class StorageManager {
         storage.child("users").child(userId)
     }
     
-    func getData(userId: String, path: String) async throws -> Data {
-        try await userReference(userId: userId).child(path).data(maxSize: 5 * 1024 * 1024)
+    func getPathForImage(path: String) async throws -> StorageReference{
+        Storage.storage().reference(withPath: path)
     }
+    
+    func getUrlForImage(path: String) async throws -> URL {
+        try await Storage.storage().reference(withPath: path).downloadURL()
+    }
+    
+    func getData(userId: String, path: String) async throws -> Data {
+//        try await userReference(userId: userId).child(path).data(maxSize: 5 * 1024 * 1024)
+        try await storage.child(path).data(maxSize: 3 * 1024 * 1024)
+    }
+    
+    func getImage(userId: String, path: String) async throws -> UIImage {
+        let data = try await getData(userId: userId, path: path)
+        
+        guard let image = UIImage(data: data) else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return image
+    }
+    
     
     func saveImage(data: Data, userId: String) async throws -> (path: String, name: String) {
         let meta = StorageMetadata()
@@ -50,5 +70,9 @@ final class StorageManager {
         }
         
         return try await saveImage(data: data, userId: userId)
+    }
+    
+    func deleteImage(path: String) async throws {
+        try await getPathForImage(path: path).delete()
     }
 }

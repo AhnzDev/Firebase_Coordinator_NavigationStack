@@ -12,7 +12,7 @@ struct ProfileView: View {
     @Binding var showSignInView: Bool
     @StateObject private var viewModel = ProfileViewModel()
     @State private var selectedItem: PhotosPickerItem? = nil
-    @State private var imageData: Data? = nil
+    @State private var url: URL? = nil
     
     let preferenceOption: [String] = ["Sports", "Movies", "Books"]
     
@@ -64,12 +64,22 @@ struct ProfileView: View {
                     Text("Select a Photo")
                 }
                 
-                if let imageData, let image = UIImage(data: imageData) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 150, height: 150)
-                        .cornerRadius(15)
+                if let urlString = user.profileImagePathUrl, let url = URL(string: urlString) {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 150, height: 150)
+                            .cornerRadius(10)
+                    } placeholder: {
+                        ProgressView()
+                    }
+                }
+                
+                if user.profileImagePath != nil{
+                    Button("Delete Image") {
+                        viewModel.deleteProfileImage()
+                    }
                 }
             }
         }
@@ -78,9 +88,8 @@ struct ProfileView: View {
                 try? await viewModel.loadCurrentUser()
                 if let user = viewModel.user, let path = user.profileImagePath {
                     do {
-                        let data = try await StorageManager.shared.getData(userId: user.userId, path: path)
-                        self.imageData = data
-                        
+                        url = try await StorageManager.shared.getUrlForImage(path: path)
+                       
                     } catch {
                         print(error)
                     }
