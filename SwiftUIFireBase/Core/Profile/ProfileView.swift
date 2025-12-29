@@ -12,6 +12,7 @@ struct ProfileView: View {
     @Binding var showSignInView: Bool
     @StateObject private var viewModel = ProfileViewModel()
     @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var imageData: Data? = nil
     
     let preferenceOption: [String] = ["Sports", "Movies", "Books"]
     
@@ -62,18 +63,33 @@ struct ProfileView: View {
                 PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
                     Text("Select a Photo")
                 }
+                
+                if let imageData, let image = UIImage(data: imageData) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 150, height: 150)
+                        .cornerRadius(15)
+                }
             }
         }
         .task {
-            Task {
                 
                 try? await viewModel.loadCurrentUser()
-                
-                // 로그인 안 되어 있으면 띄우기
-                if viewModel.user == nil {
-                    showSignInView = true
+                if let user = viewModel.user, let path = user.profileImagePath {
+                    do {
+                        let data = try await StorageManager.shared.getData(userId: user.userId, path: path)
+                        self.imageData = data
+                        
+                    } catch {
+                        print(error)
+                    }
                 }
-            }
+                // 로그인 안 되어 있으면 띄우기
+//                if viewModel.user == nil {
+//                    showSignInView = true
+//                }
+            
         }
         .onChange(of: selectedItem, perform: { newValue in
             if let newValue {
