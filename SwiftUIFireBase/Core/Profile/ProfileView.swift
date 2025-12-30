@@ -81,6 +81,9 @@ struct ProfileView: View {
                         viewModel.deleteProfileImage()
                     }
                 }
+                Button("Crash") {
+                  fatalError("Crash was triggered")
+                }
             }
         }
         .task {

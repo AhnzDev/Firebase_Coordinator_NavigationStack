@@ -15,6 +15,7 @@
 		E96B9EDC2DEF2633000E9FF4 /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E96B9EDB2DEF2633000E9FF4 /* KakaoSDK */; };
 		E96B9EDE2DEF2633000E9FF4 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E96B9EDD2DEF2633000E9FF4 /* KakaoSDKAuth */; };
 		E96B9EE02DEF2633000E9FF4 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = E96B9EDF2DEF2633000E9FF4 /* KakaoSDKCommon */; };
+		E9ACA4272F0492560016F7F1 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = E9ACA4262F0492560016F7F1 /* FirebaseCrashlytics */; };
 		E9FA6E8E2E151DED0004EBAA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E9FA6E8D2E151DED0004EBAA /* FirebaseFirestore */; };
 		E9FC7F412F0119B300AA5FB5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E9FC7F402F0119B300AA5FB5 /* FirebaseStorage */; };
 /* End PBXBuildFile section */
@@ -83,6 +84,7 @@
 				E96B9ED92DEF2615000E9FF4 /* Alamofire in Frameworks */,
 				E9FC7F412F0119B300AA5FB5 /* FirebaseStorage in Frameworks */,
 				E95BC8512DC213D3006F9128 /* FirebaseAnalytics in Frameworks */,
+				E9ACA4272F0492560016F7F1 /* FirebaseCrashlytics in Frameworks */,
 				E95BC8672DC22621006F9128 /* FirebaseAuth in Frameworks */,
 				E9FA6E8E2E151DED0004EBAA /* FirebaseFirestore in Frameworks */,
 				E90330462DE59AB2007D7E89 /* GoogleSignIn in Frameworks */,
@@ -146,6 +148,7 @@
 				E95BC8182DC210D5006F9128 /* Sources */,
 				E95BC8192DC210D5006F9128 /* Frameworks */,
 				E95BC81A2DC210D5006F9128 /* Resources */,
+				E9ACA4292F0492FF0016F7F1 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -166,6 +169,7 @@
 				E96B9EDF2DEF2633000E9FF4 /* KakaoSDKCommon */,
 				E9FA6E8D2E151DED0004EBAA /* FirebaseFirestore */,
 				E9FC7F402F0119B300AA5FB5 /* FirebaseStorage */,
+				E9ACA4262F0492560016F7F1 /* FirebaseCrashlytics */,
 			);
 			productName = SwiftUIFireBase;
 			productReference = E95BC81C2DC210D5006F9128 /* SwiftUIFireBase.app */;
@@ -290,6 +294,32 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E9ACA4292F0492FF0016F7F1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E95BC8182DC210D5006F9128 /* Sources */ = {
@@ -456,6 +486,7 @@
 				CODE_SIGN_ENTITLEMENTS = SwiftUIFireBase/SwiftUIFireBase.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftUIFireBase/Preview Content\"";
 				DEVELOPMENT_TEAM = L9843UMA9C;
 				ENABLE_PREVIEWS = YES;
@@ -700,6 +731,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E96B9EDA2DEF2633000E9FF4 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKCommon;
+		};
+		E9ACA4262F0492560016F7F1 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E95BC84F2DC213D3006F9128 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
 		};
 		E9FA6E8D2E151DED0004EBAA /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
