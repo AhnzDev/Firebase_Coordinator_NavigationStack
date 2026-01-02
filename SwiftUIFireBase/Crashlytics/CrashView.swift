@@ -13,7 +13,7 @@ struct CrashView: View {
             Color.gray.ignoresSafeArea()
             
             VStack {
-                Button("Click me 2") {
+                Button("Click me 1") {
                     let myString: String? = nil
                     let string2 = myString!
                 }
